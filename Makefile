@@ -71,6 +71,7 @@ build/release:
 	@mkdir -p build/release build/deps
 
 # Debug route.
+.PHONY: debug
 debug: CXXFLAGS+= $(DEBUG_CXXFLAGS)
 debug: LDFLAGS+= $(DEBUG_LDFLAGS)
 debug: build/debug/$(OUTPUT)
@@ -93,6 +94,7 @@ build/debug/%.o : %.cpp
 	@rm -f build/deps/$*.d.tmp
 
 # Release route.
+.PHONY: release
 release: CXXFLAGS+= $(RELEASE_CXXFLAGS)
 release: LDFLAGS+= $(RELEASE_LDFLAGS)
 release: build/release/$(OUTPUT)
