@@ -61,6 +61,23 @@ DEPFILES:=$(addprefix build/deps/,$(addsuffix .d,$(BASEFILES)))
 # Default to release build.
 all: release
 
+# Compilation flags.
+compile_commands:
+	@echo 'generating compilation database...'
+	@echo -n '[' > ${COMPILE_DB} ; \
+	for src in ${SRCS} ; do \
+	  if [ -z "$$nocomma" ]; then \
+       	    nocomma=1 ; \
+	  else \
+	    echo ',' >> ${COMPILE_DB} ; \
+	  fi ; \
+	  echo '{ "directory": "'"$(shell pwd)"'",' >> ${COMPILE_DB} ; \
+	  echo '  "file": "'"$(abspath $$src)"'",' >> ${COMPILE_DB} ; \
+	  echo -n '  "command": "'"${CXX} ${CXXFLAGS} -c $$src"'" }' >> ${COMPILE_DB} ; \
+	done ; \
+	echo ']' >> ${COMPILE_DB}
+
+
 # Directory targets
 build/debug:
 	@echo creating debug directory
@@ -72,8 +89,11 @@ build/release:
 
 # Debug route.
 .PHONY: debug
+debug: COMPILE_DB:=build/debug/compile_commands.json
 debug: CXXFLAGS+= $(DEBUG_CXXFLAGS)
 debug: LDFLAGS+= $(DEBUG_LDFLAGS)
+debug: build/debug
+debug: compile_commands
 debug: build/debug/$(OUTPUT)
 
 build/debug/$(OUTPUT): build/debug $(DEBUG_OBJS)
@@ -95,8 +115,11 @@ build/debug/%.o : %.cpp
 
 # Release route.
 .PHONY: release
+release: COMPILE_DB:=build/release/compile_commands.json
 release: CXXFLAGS+= $(RELEASE_CXXFLAGS)
 release: LDFLAGS+= $(RELEASE_LDFLAGS)
+release: build/release
+release: compile_commands
 release: build/release/$(OUTPUT)
 
 build/release/$(OUTPUT): build/release $(RELEASE_OBJS)
