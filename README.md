@@ -9,9 +9,12 @@ This is a dumb Makefile that globs source files from the current directory and
 automatically infers interfile dependencies minimising the friction that comes
 with setting up a Makefile in general.
 
-Supports debug & release out of directory builds with configurable flags.
+Supports debug & release out of directory builds with configurable flags. Also
+generates a compile_commands.json in the debug & folders to use with clang
+tooling (tested with YouCompleteMe on vim, see my generic
+[.ycm\_extra\_conf.py](github.com/cristicbz/dotfiles/blob/master/ycm_extra_conf.py)).
 
-Just drop this in a folder of a toy project, change the executable name, set
+Just drop this in a folder of a toy project, change the executable name and set
 compiler & linker flags if you need to. Then 'make && build/release/<output>'
 and you're done.
 
